@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import s from "./Timer.module.scss";
 
 const Timer = () => {
-  const [time, setTime] = useState(180);
+  const [time, setTime] = useState<number>(180);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -20,7 +20,7 @@ const Timer = () => {
 
   const formattedTime = new Date(time * 1000).toISOString().substr(14, 5);
 
-  return <span className={s.time}>{formattedTime}</span>;
+  return <span className={s.time}>{formattedTime} сек</span>;
 };
 
 export default Timer;

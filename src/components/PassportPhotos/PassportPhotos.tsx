@@ -4,6 +4,7 @@ import icon from "../../assets/icon.png";
 import icon2 from "../../assets/icon2.png";
 import document from "../../assets/document-upload.png";
 import camera from "../../assets/camera.png";
+import ModalVideo from "./components/ModalVideo/ModalVideo";
 
 const PassportPhotos = () => {
   const [selectedImages, setSelectedImages] = useState<(string | null)[]>([
@@ -11,6 +12,11 @@ const PassportPhotos = () => {
     null,
     null,
   ]);
+  const [modalActive, setModalActive] = useState<boolean>(false);
+  const [stepContentModal, setStepContentModal] = useState(1);
+  const [recordedVideoURL, setRecordedVideoURL] = useState<string | undefined>(
+    undefined
+  );
 
   const handleImageUpload = (
     event: ChangeEvent<HTMLInputElement>,
@@ -30,6 +36,16 @@ const PassportPhotos = () => {
 
   return (
     <section className={s.passportPhotos}>
+      {modalActive && (
+        <ModalVideo
+          recordedVideoURL={recordedVideoURL}
+          setRecordedVideoURL={setRecordedVideoURL}
+          modalActive={modalActive}
+          setModalActive={setModalActive}
+          step={stepContentModal}
+          nextStep={setStepContentModal}
+        />
+      )}
       <div className="container">
         <div className={s.title}>
           <h2>Фото с паспортом в руках</h2>
@@ -40,37 +56,45 @@ const PassportPhotos = () => {
           </p>
         </div>
         <div
-          style={selectedImages[0] ? { border: "none" } : undefined}
           className={s.photos_block}
+          style={
+            stepContentModal === 4 ? { padding: "0" } : { padding: "20 0" }
+          }
         >
-          {selectedImages[0] && (
-            <div className={s.photos_block__image}>
-              <img src={selectedImages[0]} alt="img" />
-            </div>
+          {stepContentModal === 4 && recordedVideoURL !== undefined ? (
+            <video className={s.video} src={recordedVideoURL} autoPlay />
+          ) : (
+            <>
+              {selectedImages[0] && (
+                <div className={s.photos_block__image}>
+                  <img src={selectedImages[0]} alt="img" />
+                </div>
+              )}
+              <img src={icon} alt="img" />
+              <div className={s.photos_block__btns}>
+                <button>
+                  <label htmlFor="upload-photo">
+                    <img src={document} alt="img" />
+                    <span>Загрузить</span>
+                  </label>
+                  <input
+                    style={{ display: "none" }}
+                    type="file"
+                    id="upload-photo"
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(e, 0)}
+                  />
+                </button>
+                <button onClick={() => setModalActive(true)}>
+                  <img src={camera} alt="img" />
+                  <span>Открыть камеру</span>
+                </button>
+              </div>
+            </>
           )}
-          <img src={icon} alt="img" />
-          <div className={s.photos_block__btns}>
-            <button>
-              <label htmlFor="upload-photo">
-                <img src={document} alt="img" />
-                <span>Загрузить</span>
-              </label>
-              <input
-                style={{ display: "none" }}
-                type="file"
-                id="upload-photo"
-                accept="image/*"
-                onChange={(e) => handleImageUpload(e, 0)}
-              />
-            </button>
-            <button>
-              <img src={camera} alt="img" />
-              <span>Открыть камеру</span>
-            </button>
-          </div>
         </div>
         <div className={s.title}>
-          <h2>Фото с паспортом в руках</h2>
+          <h2>Фото паспорта</h2>
         </div>
         <div className={s.subtitle}>
           <p>
